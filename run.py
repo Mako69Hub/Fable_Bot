@@ -5,8 +5,13 @@ from aiogram import Bot, Dispatcher
 from app.handlers import router
 from confige import TOKEN
 
+#Для жирного шрифта и выделений
+from aiogram.client.bot import DefaultBotProperties
+from aiogram.enums import ParseMode
+
+
 async def main():
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
 
     dp.include_router(router)
