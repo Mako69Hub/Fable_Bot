@@ -5,7 +5,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 import app.keyboards as kb
-from info.text import DESCRIPTION_HERO, DESCRIPTION_SETTING, TEST_RESULT, TEST
+from info.text import DESCRIPTION_HERO, DESCRIPTION_SETTING, TEST_RESULT, TEST, STORY
 
 router = Router()
 
@@ -17,6 +17,7 @@ class Register(StatesGroup):
     character_three = State()
     hero = State()
     setting = State()
+
 
 class Setting(StatesGroup):
     setting = State()
@@ -136,17 +137,48 @@ async def setting(message: Message, state: FSMContext):
 
 
 @router.message(Setting.answer_setting)
-async def setting_answer (message: Message, state: FSMContext):
+async def setting_answer(message: Message, state: FSMContext):
     if await check_result_test(message, 'answer_setting'):
         return
 
     yes, no = TEST_RESULT['answer_setting']
     if message.text == yes:
-        await state.clear()
-        await message.answer('Сохраняю...\nА теперь давай писать сказку')
+        await state.set_state(Fable.zero)
+        await message.answer('Сохраняю...\nА теперь давай писать сказку\nВыберите один <b>зачин</b> вашей сказки')
+
+        result = ''
+        button_reply = []
+        for i in range(3):
+            title, text = STORY[i]
+            result += f'{title}\n{text}\n\n'
+
+            for j in (('<b>', ''), ('</b>', '')):
+                title = title.replace(*j)
+            button_reply.append(title)
+
+        await message.answer(result, reply_markup=kb.reply_kb(button_reply))
+
     else:
         await state.set_state(Setting.setting)
         button_reply = TEST_RESULT['setting']
         await message.answer('Выберите кнопками интересующий сеттинг',
                              reply_markup=kb.reply_kb(button_reply, 1))
 
+
+class Fable(StatesGroup):
+    zero = State()
+    one = State()
+    two = State()
+    three = State()
+    four = State()
+    five = State()
+    six = State()
+    seven = State()
+    eight = State()
+    nine = State()
+    ten = State()
+
+
+@router.message(Fable.one)
+def cls_zero(message: Message, state: FSMContext):
+    pass

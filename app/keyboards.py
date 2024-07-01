@@ -17,7 +17,7 @@ def inline_test(button, url):
     return inline_kb
 
 
-def reply_kb(text: str, kb_num=3):
+def reply_kb(text: list, kb_num=3):
     builder = ReplyKeyboardBuilder()
 
     [builder.button(text=txt) for txt in text]
