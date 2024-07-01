@@ -20,6 +20,7 @@ class Register(StatesGroup):
 
 class Setting(StatesGroup):
     setting = State()
+    answer_setting = State()
 
 
 async def check_result_test(message: Message, test: str) -> None:
@@ -112,24 +113,40 @@ async def register_hero(message: Message, state: FSMContext):
     await state.set_state(Setting.setting)
 
     data = await state.get_data()
-    print(data)
 
     await message.answer(f'Ваше имя: {data["name"]}\nВаш герой: {data["hero"]}\n{DESCRIPTION_HERO[data["hero"]]}\n'
                          f'Ваши черты личности: {data["character_one"]}, {data["character_two"]}, '
                          f'{data["character_three"]}')
 
-    # await message.answer('Теперь выберем сеттинг сказки',
-    #                      eply_markup=kb.reply_kb(TEST_RESULT['setting'], 1))
+    button_reply = TEST_RESULT['setting']
+    await message.answer('Теперь выберем сеттинг сказки', reply_markup=kb.reply_kb(button_reply, 1))
 
 
-@router.message(F.text == 'Викторианская Англия (балы, рыцари, войны)')
-async def cmd1(message: Message):
-    await message.answer('text2')
-    # if message.text in DESCRIPTION_SETTING.items():
-    #     await state.set_state(Setting.processing_choice)
-    #     await message.answer(DESCRIPTION_SETTING[message.text],
-    #                          reply_markup=kb.reply_kb(TEST_RESULT['Выбрать Королевство', 'А можно посмотреть всех?']))
-    # else:
-    #     await message.answer('Теперь выберем сеттинг сказки кнопками',
-    #                             reply_markup=kb.reply_kb(TEST_RESULT['setting'], 1)
-    #     return
+@router.message(Setting.setting)
+async def setting(message: Message, state: FSMContext):
+    if await check_result_test(message, 'setting'):
+        return
+
+    await state.update_data(setting=message.text)
+    await state.set_state(Setting.answer_setting)
+
+    description = DESCRIPTION_SETTING[message.text]
+    button_reply = TEST_RESULT['answer_setting']
+    await message.answer(description, reply_markup=kb.reply_kb(button_reply))
+
+
+@router.message(Setting.answer_setting)
+async def setting_answer (message: Message, state: FSMContext):
+    if await check_result_test(message, 'answer_setting'):
+        return
+
+    yes, no = TEST_RESULT['answer_setting']
+    if message.text == yes:
+        await state.clear()
+        await message.answer('Сохраняю...\nА теперь давай писать сказку')
+    else:
+        await state.set_state(Setting.setting)
+        button_reply = TEST_RESULT['setting']
+        await message.answer('Выберите кнопками интересующий сеттинг',
+                             reply_markup=kb.reply_kb(button_reply, 1))
+
