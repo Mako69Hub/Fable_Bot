@@ -5,6 +5,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 import app.keyboards as kb
+import app.validator as vd
 from info.text import DESCRIPTION_HERO, DESCRIPTION_SETTING, TEST_RESULT, TEST, STORY
 
 router = Router()
@@ -24,10 +25,18 @@ class Setting(StatesGroup):
     answer_setting = State()
 
 
-async def check_result_test(message: Message, test: str) -> None:
+async def check_result_test(message: Message, test: str) -> bool:
     result_test = TEST_RESULT[test]
     if message.text not in result_test:
         await message.answer('Выберите ответ кнопками ниже', reply_markup=kb.reply_kb(result_test))
+        return True
+    return False
+
+
+async def check_result_story(message: Message, story: str) -> bool: #переписать проверку
+    result_story = STORY[story]
+    if message.text not in result_story:
+        await message.answer('Выберите ответ кнопками ниже', reply_markup=kb.reply_kb(result_story))
         return True
     return False
 
@@ -151,9 +160,6 @@ async def setting_answer(message: Message, state: FSMContext):
         for i in range(3):
             title, text = STORY[i]
             result += f'{title}\n{text}\n\n'
-
-            for j in (('<b>', ''), ('</b>', '')):
-                title = title.replace(*j)
             button_reply.append(title)
 
         await message.answer(result, reply_markup=kb.reply_kb(button_reply))
@@ -179,6 +185,12 @@ class Fable(StatesGroup):
     ten = State()
 
 
-@router.message(Fable.one)
-def cls_zero(message: Message, state: FSMContext):
-    pass
+@router.message(Fable.zero)
+async def cls_zero(message: Message, state: FSMContext):
+
+#Нужно бахнуть проверку
+    await state.update_data(zero=message.text)
+    await state.set_state(Fable.one)
+
+    result, button_reply = vd.one(message.text)
+    await message.answer(result, reply_markup=kb.reply_kb(button_reply))
