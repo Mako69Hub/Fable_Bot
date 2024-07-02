@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
@@ -33,17 +33,30 @@ async def check_result_test(message: Message, test: str) -> bool:
     return False
 
 
-async def check_result_story(message: Message, story: str) -> bool: #переписать проверку
-    result_story = STORY[story]
-    if message.text not in result_story:
-        await message.answer('Выберите ответ кнопками ниже', reply_markup=kb.reply_kb(result_story))
-        return True
-    return False
+# async def check_result_story(message: Message, result, button_reply) -> bool:  # переписать проверку\
+#     print('5416/')
+#     if message.text not in result:
+#         await message.answer('Выберите ответ кнопками ниже', reply_markup=kb.reply_kb(button_reply))
+#         return True
+#     return False
 
 
 @router.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext):
-    await message.answer('text1: для старта команда /fable')
+    await message.answer('Пропишите /lol 0\nГде 0 подставляйте число от 0 до 33\n')
+
+
+@router.message(Command('lol')) #УБРАТЬ
+async def lol(message: Message, command: CommandObject):
+    a = int(command.args)
+    try:
+        result = STORY[a][1]
+        button = STORY[a][0]
+
+        await message.answer(f'Вариант выбора выглядит так:\n\n{result}')
+        await message.answer(f'Кнопка выглядит так:\n\n{button}')
+    except KeyError:
+        await message.answer('Выбирай значение от 0 до 33')
 
 
 @router.message(Command('fable'))
@@ -124,6 +137,7 @@ async def register_hero(message: Message, state: FSMContext):
 
     data = await state.get_data()
 
+
     await message.answer(f'Ваше имя: {data["name"]}\nВаш герой: {data["hero"]}\n{DESCRIPTION_HERO[data["hero"]]}\n'
                          f'Ваши черты личности: {data["character_one"]}, {data["character_two"]}, '
                          f'{data["character_three"]}')
@@ -152,16 +166,10 @@ async def setting_answer(message: Message, state: FSMContext):
 
     yes, no = TEST_RESULT['answer_setting']
     if message.text == yes:
-        await state.set_state(Fable.zero)
-        await message.answer('Сохраняю...\nА теперь давай писать сказку\nВыберите один <b>зачин</b> вашей сказки')
+        await state.clear()
+        await message.answer('Сохраняю...\nА теперь давай писать сказку\nВыберите  <b>зачин</b> для вашей сказки')
 
-        result = ''
-        button_reply = []
-        for i in range(3):
-            title, text = STORY[i]
-            result += f'{title}\n{text}\n\n'
-            button_reply.append(title)
-
+        result, button_reply = vd.zero()
         await message.answer(result, reply_markup=kb.reply_kb(button_reply))
 
     else:
@@ -172,7 +180,6 @@ async def setting_answer(message: Message, state: FSMContext):
 
 
 class Fable(StatesGroup):
-    zero = State()
     one = State()
     two = State()
     three = State()
@@ -184,13 +191,15 @@ class Fable(StatesGroup):
     nine = State()
     ten = State()
 
-
-@router.message(Fable.zero)
-async def cls_zero(message: Message, state: FSMContext):
-
-#Нужно бахнуть проверку
-    await state.update_data(zero=message.text)
-    await state.set_state(Fable.one)
-
-    result, button_reply = vd.one(message.text)
-    await message.answer(result, reply_markup=kb.reply_kb(button_reply))
+#
+# @router.message(Fable.one)
+# async def false_one(message: Message, state: FSMContext):
+#     result, button_reply = vd.zero()
+#     if await check_result_story(message, result, button_reply):
+#         return
+#
+#     await state.update_data(one=message.text)
+#     await state.set_state(Fable.two)
+#
+#     result, button_reply = vd.two(message.text)
+#     await message.answer(result, reply_markup=kb.reply_kb(button_reply))
