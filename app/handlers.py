@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import F, Router
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.types import Message, CallbackQuery
@@ -211,6 +213,8 @@ async def fable_stage(message: Message, state: FSMContext):
 
         result, new_num_story = vd.result_dice(number_cur_story, result_dice)
         button_reply = vd.generation_button(new_num_story)
+
+        await asyncio.sleep(5)
         await message.answer(result, reply_markup=kb.reply_kb(button_reply))
 
         new_stage = f'{stage}, {new_num_story}'  # Дополняем общее состояние
