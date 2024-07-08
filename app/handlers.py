@@ -180,6 +180,12 @@ async def fable_stage(message: Message, state: FSMContext):
     if number_cur_story == 33:
         await message.answer('Вот и закончилась наша история. Вывожу ваш путь...')
 
+        data = await state.get_data()
+        await message.answer(
+            f'Ваше имя: {data["name"]}\nВаш персонаж: {data["hero"]}\n{DESCRIPTION_HERO[data["hero"]]}\n'
+            f'Ваши черты личности: {data["character_one"]}, {data["character_two"]}, '
+            f'{data["character_three"]}')
+
         story_end = vd.result_story(stage)
         for msg in story_end:
             await message.answer(msg)
@@ -213,14 +219,4 @@ async def fable_stage(message: Message, state: FSMContext):
         return
 
     result, button_reply = vd.generation_msg(number_cur_story)
-    await message.answer(result, reply_markup=kb.reply_kb(button_reply))
-
-
-@router.message(Command('story'))
-async def lol(message: Message, state: FSMContext):
-    await state.set_state(Fable.stage)
-    await state.update_data(current=-1, stage=-1)
-    await message.answer('А теперь давай писать сказку')
-
-    result, button_reply = vd.generation_msg(-1)
     await message.answer(result, reply_markup=kb.reply_kb(button_reply))
