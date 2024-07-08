@@ -2,12 +2,12 @@ from info.text import STORY, HOOKUP
 
 
 def generation_msg(cur):
-    result = ''
+    result = f"{STORY[cur]['message']}\n\n"
     button = []
     ran = HOOKUP[cur]
     for i in ran:
-        title, text = STORY[i]
-        result += f'{title}\n{text}\n\n'
+        title, text = STORY[i]['button'], STORY[i]['msg']
+        result += f'{text}\n\n'
         button.append(title)
     return result, button
 
@@ -15,68 +15,58 @@ def generation_msg(cur):
 def generation_button(cur):
     button = []
     ran = HOOKUP[cur]
-    # print(ran)
+
     for i in ran:
-        button.append(STORY[i][0])
-    # print('generation_button', button)
+        button.append(STORY[i]['button'])
     return button
 
 
 def num_story(text):
     for num, txt in STORY.items():
-        if text in txt:
+        if text in txt.values():
             return num
 
 
+def result_story(stage):
+    stg = stage.split(', ')
+    story_us = []
+    story = ''
+    for choice in stg:
 
+        # print(choice)
+        story_cur = STORY[int(choice)]['message']
+
+        if len(story+story_cur) > 4096:
+            story_us.append(story)
+            story = ''
+
+        story = f'{story}\n\n{story_cur}'
+    story_us.append(story)
+    return story_us
 
 
 def check_but_story(choice, cur_status):
     if choice in generation_button(cur_status):
         return True
 
-    #
-    #     result, button_reply = vd.zero()
-    #     # if await check_result_story(message, button_reply):
-    #     result_test = TEST_RESULT[test]
-    #     if message.text not in result_test:
-    #         await message.answer('Выберите ответ кнопками ниже', reply_markup=kb.reply_kb(result_test))
-    #         return True
-    #     return False
-    #
-    # async def check_result_story(message: Message, button_reply) -> bool:  # переписать проверку\
-    #     if message.text not in button_reply:
-    #         await message.answer('Выберите ответ кнопками ниже', reply_markup=kb.reply_kb(button_reply))
-    #         return True
-    #     return False
 
+def result_dice(cur, res_dice):
+    if cur == 10:
+        if res_dice in [1, 2]:
+            return STORY[50]['message'], 50
 
-def two(text):
-    if text == STORY[0][0]:  # Если Отлучка
-        result = f'{STORY[3][1]}\n\n'
-        return generation_msg(result, range(4, 6))  # Нарушение или послушание
+        elif res_dice in [3, 4]:
+            return STORY[51]['message'], 51
 
-    if text == STORY[1][0]:
-        pass
-        # ПОСРЕДНИЧЕСТВО
+        else:
+            return STORY[52]['message'], 52
 
-        # недостача
+    else:
+        if res_dice in [1, 2]:
+            return STORY[53]['message'], 53
 
+        elif res_dice in [3, 4]:
+            return STORY[54]['message'], 54
 
-def three(text):
-    if text == STORY[5][0]:  # Послушаться
-        result = f'{STORY[5][1]}\n\n'
-        print(result)
-        return generation_msg(result, range(1, 3))
-
-    if text == STORY[4][0]:
-        result = STORY[6][1]
-        return result  # нарушить, что последует
-
-    elif text == STORY[5][0]:
-        pass  # подчиниться
-
-# print(one())
-# x = check_answer_story('Отлучка 🚗', -1)
-# print(x)
-generation_button(-1)
+        else:
+            return STORY[55]['message'], 55

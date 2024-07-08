@@ -2,8 +2,6 @@ from aiogram.types import (ReplyKeyboardMarkup, KeyboardButton,
                            InlineKeyboardMarkup, InlineKeyboardButton)
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-from info.text import TEST, TEST_RESULT
-
 
 def inline_test(button, url):
 
