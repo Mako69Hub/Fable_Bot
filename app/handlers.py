@@ -56,7 +56,7 @@ async def cmd_fable(message: Message, state: FSMContext):
 @router.message(Register.name)
 async def register_name(message: Message, state: FSMContext):
     if message.text == None:
-        await message.answer('Напиши имя текстом')
+        await message.answer('Напиши имя текстом!')
         return
 
     await state.update_data(name=message.text)
@@ -66,7 +66,7 @@ async def register_name(message: Message, state: FSMContext):
     await message.answer('Время пройти первый тест', reply_markup=kb.inline_test(button_inline, url))
 
     button_reply = TEST_RESULT['character_one']
-    await message.answer('Выберите кнопками ваш результат', reply_markup=kb.reply_kb(button_reply))
+    await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply))
 
 
 @router.message(Register.character_one)
@@ -81,7 +81,7 @@ async def register_character_one(message: Message, state: FSMContext):
     await message.answer('Время пройти второй тест', reply_markup=kb.inline_test(button_inline, url))
 
     button_reply = TEST_RESULT['character_two']
-    await message.answer('Выберите кнопками ваш результат', reply_markup=kb.reply_kb(button_reply))
+    await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply))
 
 
 @router.message(Register.character_two)
@@ -96,7 +96,7 @@ async def register_character_two(message: Message, state: FSMContext):
     await message.answer('Время пройти третий тест', reply_markup=kb.inline_test(button_inline, url))
 
     button_reply = TEST_RESULT['character_three']
-    await message.answer('Выберите кнопками ваш результат', reply_markup=kb.reply_kb(button_reply))
+    await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply))
 
 
 @router.message(Register.character_three)
@@ -112,7 +112,7 @@ async def register_character_three(message: Message, state: FSMContext):
                          reply_markup=kb.inline_test(button_inline, url))
 
     button_reply = TEST_RESULT['hero']
-    await message.answer('Выберите кнопками ваш результат', reply_markup=kb.reply_kb(button_reply))
+    await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply))
 
 
 @router.message(Register.hero)
@@ -129,7 +129,7 @@ async def register_hero(message: Message, state: FSMContext):
                          f'{data["character_three"]}')
 
     button_reply = TEST_RESULT['setting']
-    await message.answer('Теперь выберем сеттинг сказки', reply_markup=kb.reply_kb(button_reply, 1))
+    await message.answer('Теперь выберем сеттинг сказки:', reply_markup=kb.reply_kb(button_reply, 1))
 
 
 @router.message(Setting.setting)
@@ -154,7 +154,7 @@ async def setting_answer(message: Message, state: FSMContext):
     if message.text == yes:
         await state.set_state(Fable.stage)
         await state.update_data(current=-1, stage=-1)
-        await message.answer('Сохраняю...\nА теперь давай писать сказку')
+        await message.answer('Сохраняю...\nА теперь давай писать сказку!')
 
         result, button_reply = vd.generation_msg(-1)
         await message.answer(result, reply_markup=kb.reply_kb(button_reply))
@@ -162,7 +162,7 @@ async def setting_answer(message: Message, state: FSMContext):
     else:
         await state.set_state(Setting.setting)
         button_reply = TEST_RESULT['setting']
-        await message.answer('Выберите кнопками интересующий сеттинг',
+        await message.answer('Выберите кнопками интересующий сеттинг:',
                              reply_markup=kb.reply_kb(button_reply, 1))
 
 
@@ -174,7 +174,7 @@ async def fable_stage(message: Message, state: FSMContext):
 
     if not vd.check_but_story(message.text, current):  # Проверка, нажал ли на кнопку
         button_reply = vd.generation_button(current)  # Генератор кнопок по текущему статусу пользователя
-        await message.answer('Воспользуйтесь кнопками', reply_markup=kb.reply_kb(button_reply))
+        await message.answer('Воспользуйтесь кнопками!', reply_markup=kb.reply_kb(button_reply))
         return
 
     number_cur_story = vd.num_story(message.text)  # По ответу получаем номер состояния
@@ -186,12 +186,13 @@ async def fable_stage(message: Message, state: FSMContext):
         await message.answer(
             f'Ваше имя: {data["name"]}\nВаш персонаж: {data["hero"]}\n{DESCRIPTION_HERO[data["hero"]]}\n'
             f'Ваши черты личности: {data["character_one"]}, {data["character_two"]}, '
-            f'{data["character_three"]}')
+            f'{data["character_three"]}\n\nСеттинг сказки:{data["setting"]}\n{DESCRIPTION_SETTING[data["setting"]]}')
 
         story_end = vd.result_story(stage)
         for msg in story_end:
             await message.answer(msg)
 
+        await message.answer('Мы создали скелет для вашей сказки. Теперь скопируйте его к себе и приступайте к написанию истории!')
         await state.clear()
         return
 
