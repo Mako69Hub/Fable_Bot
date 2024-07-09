@@ -55,8 +55,8 @@ async def cmd_fable(message: Message, state: FSMContext):
 
 @router.message(Register.name)
 async def register_name(message: Message, state: FSMContext):
-    if message.text == None:
-        await message.answer('Напиши имя текстом!')
+    if message.text == None or len(message.text) > 200:
+        await message.answer('Напиши имя текстом! Не более 200 символов')
         return
 
     await state.update_data(name=message.text)
@@ -184,15 +184,17 @@ async def fable_stage(message: Message, state: FSMContext):
 
         data = await state.get_data()
         await message.answer(
-            f'Ваше имя: {data["name"]}\nВаш персонаж: {data["hero"]}\n{DESCRIPTION_HERO[data["hero"]]}\n'
-            f'Ваши черты личности: {data["character_one"]}, {data["character_two"]}, '
-            f'{data["character_three"]}\n\nСеттинг сказки:{data["setting"]}\n{DESCRIPTION_SETTING[data["setting"]]}')
+            f'✍️ Ваше имя: {data["name"]}\n👤Ваш персонаж: {data["hero"]}\n{DESCRIPTION_HERO[data["hero"]]}\n'
+            f'🪬Ваши черты личности: {data["character_one"]}, {data["character_two"]}, '
+            f'{data["character_three"]}')
+
+        await message.answer(f'🏰Сеттинг сказки: {data["setting"]}\n{DESCRIPTION_SETTING[data["setting"]]}')
 
         story_end = vd.result_story(stage)
         for msg in story_end:
             await message.answer(msg)
 
-        await message.answer('Мы создали скелет для вашей сказки. Теперь скопируйте его к себе и приступайте к написанию истории!')
+        await message.answer('Мы создали скелет для вашей сказки. Теперь скопируйте его к себе и приступайте к написанию истории!📝')
         await state.clear()
         return
 
