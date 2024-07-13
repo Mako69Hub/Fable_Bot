@@ -73,7 +73,7 @@ async def register_name(message: Message, state: FSMContext):
     await message.answer_photo(photo=FSInputFile(photo_path))
 
     button_inline, url = TEST[0]
-    await message.answer('Время пройти первый тест', reply_markup=kb.inline_test(button_inline, url))
+    await message.answer('Время пройти первый тест "однажды в таверне" ↓, ', reply_markup=kb.inline_test(button_inline, url))
 
     await asyncio.sleep(5)
     button_reply = TEST_RESULT['character_one']
@@ -93,7 +93,7 @@ async def register_character_one(message: Message, state: FSMContext):
     await message.answer_photo(photo=FSInputFile(photo_path))
 
     button_inline, url = TEST[1]
-    await message.answer('Время пройти второй тест', reply_markup=kb.inline_test(button_inline, url))
+    await message.answer('Время пройти второй тест "однажды на дороге" ↓', reply_markup=kb.inline_test(button_inline, url))
 
     await asyncio.sleep(5)
     button_reply = TEST_RESULT['character_two']
@@ -113,7 +113,7 @@ async def register_character_two(message: Message, state: FSMContext):
     await message.answer_photo(photo=FSInputFile(photo_path))
 
     button_inline, url = TEST[2]
-    await message.answer('Время пройти третий тест', reply_markup=kb.inline_test(button_inline, url))
+    await message.answer('Время пройти третий тест "однажды дома" ↓', reply_markup=kb.inline_test(button_inline, url))
 
     await asyncio.sleep(5)
     button_reply = TEST_RESULT['character_three']
