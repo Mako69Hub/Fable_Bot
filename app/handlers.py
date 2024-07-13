@@ -75,7 +75,7 @@ async def register_name(message: Message, state: FSMContext):
     button_inline, url = TEST[0]
     await message.answer('Время пройти первый тест', reply_markup=kb.inline_test(button_inline, url))
 
-    # await asyncio.sleep(5)
+    await asyncio.sleep(5)
     button_reply = TEST_RESULT['character_one']
     await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply),
                          disable_notification=True)
@@ -95,7 +95,7 @@ async def register_character_one(message: Message, state: FSMContext):
     button_inline, url = TEST[1]
     await message.answer('Время пройти второй тест', reply_markup=kb.inline_test(button_inline, url))
 
-    # await asyncio.sleep(5)
+    await asyncio.sleep(5)
     button_reply = TEST_RESULT['character_two']
     await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply),
                          disable_notification=True)
@@ -115,7 +115,7 @@ async def register_character_two(message: Message, state: FSMContext):
     button_inline, url = TEST[2]
     await message.answer('Время пройти третий тест', reply_markup=kb.inline_test(button_inline, url))
 
-    # await asyncio.sleep(5)
+    await asyncio.sleep(5)
     button_reply = TEST_RESULT['character_three']
     await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply),
                          disable_notification=True)
@@ -136,7 +136,7 @@ async def register_character_three(message: Message, state: FSMContext):
     await message.answer('Колесо фортуны подскажет, что у вас будет за герой',
                          reply_markup=kb.inline_test(button_inline, url))
 
-    # await asyncio.sleep(5)
+    await asyncio.sleep(5)
     button_reply = TEST_RESULT['hero']
     await message.answer('Выберите кнопками ваш результат!', reply_markup=kb.reply_kb(button_reply),
                          disable_notification=True)
@@ -155,7 +155,7 @@ async def register_hero(message: Message, state: FSMContext):
                          f'Ваши черты личности: {data["character_one"]}, {data["character_two"]}, '
                          f'{data["character_three"]}')
 
-    # await asyncio.sleep(4)
+    await asyncio.sleep(4)
     photo_path = 'foto/kingdom.jpg'
     await message.answer_photo(photo=FSInputFile(photo_path))
 
